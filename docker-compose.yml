@@ -1,0 +1,32 @@
+services:
+  geoserver:
+    image: kartoza/geoserver:latest
+    container_name: geoserver
+    environment:
+      GEOSERVER_ADMIN_USER: admin
+      GEOSERVER_ADMIN_PASSWORD: geoserver
+    ports:
+      - "8080:8080"
+    volumes:
+      - geoserver_volume:/opt/geoserver/data_dir
+
+  app:
+    build:
+      context: .
+    image: smplatform:latest
+    container_name: app
+    command: >
+      sh -c "python manage.py makemigrations &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./app_map:/app
+    ports:
+      - "8000:8000"
+    environment:
+      SECRET_KEY: test
+      DEBUG: "True"
+    restart: always
+
+volumes:
+  geoserver_volume:

@@ -1,0 +1,155 @@
+/* ==========================================================================
+   Responsive: sm (640px+)
+   ========================================================================== */
+
+@media (min-width: 640px) {
+  .nav-label {
+    display: inline;
+  }
+
+  .bottom-info-bar {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+
+/* ==========================================================================
+   Responsive: lg (1024px+)
+   ========================================================================== */
+
+@media (min-width: 1024px) {
+  .main-content {
+    padding: var(--space-6);
+  }
+
+  .dashboard-upper-section {
+    grid-template-columns: var(--sidebar-width) 1fr;
+    height: calc(100vh - 14.5rem);
+  }
+
+  .map-area-wrapper {
+    height: 100%;
+  }
+
+  .bottom-info-bar {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .sidebar {
+    width: var(--sidebar-width);
+  }
+}
+
+
+/* ==========================================================================
+   Responsive: max 1023px (below lg)
+   ========================================================================== */
+
+@media (max-width: 1023px) {
+  .sidebar {
+    width: 100%;
+  }
+}
+
+
+/* ==========================================================================
+   Responsive: max 639px (below sm)
+   ========================================================================== */
+
+@media (max-width: 639px) {
+  .header {
+    padding: 0 var(--space-4);
+  }
+
+  .header-nav .nav-btn {
+    padding: var(--space-2);
+  }
+
+  .header-nav .nav-btn svg {
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+
+  .main-content {
+    padding: var(--space-3);
+  }
+
+  .dashboard-upper-section {
+    gap: var(--space-4);
+  }
+
+  .map-area-wrapper {
+    height: 450px;
+  }
+
+  .map-toolbar {
+    top: var(--space-2);
+    left: var(--space-2);
+  }
+
+  .toolbar-btn {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  .toolbar-btn svg {
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+
+  .basemap-switcher {
+    top: var(--space-2);
+    right: var(--space-2);
+  }
+
+  .basemap-btn {
+    font-size: 0.625rem;
+    padding: var(--space-1) var(--space-2);
+  }
+
+  .map-badges {
+    bottom: var(--space-2);
+    left: var(--space-2);
+    flex-wrap: wrap;
+  }
+
+  .map-badge {
+    font-size: 0.625rem;
+    padding: var(--space-1) var(--space-2);
+  }
+
+  .scale-bar {
+    bottom: var(--space-2);
+    right: var(--space-2);
+  }
+
+  .bottom-info-bar {
+    gap: var(--space-3);
+  }
+
+  .info-card {
+    padding: var(--space-3);
+  }
+
+  .panel-header {
+    padding: var(--space-3);
+  }
+
+  .panel-body {
+    padding: 0 var(--space-3) var(--space-3);
+  }
+}
+
+
+/* ==========================================================================
+   Reduced Motion
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

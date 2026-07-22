@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Soil Moisture Monitoring Platform</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/sidebar.css" />
+  <link rel="stylesheet" href="css/map.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body>
+
+  <!-- ============================================================
+       APP SHELL
+       ============================================================ -->
+  <div class="app-shell">
+
+    <!-- ==========================================================
+         HEADER
+         ========================================================== -->
+    <header class="header" role="banner">
+      <div class="header-left">
+        <!-- Logo Icon -->
+        <div class="header-logo" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-emerald-200);">
+            <path d="M11 20A7 7 0 0 1 9.8 6.9C15.5 4.9 17 3.5 19 2c1 2 2 4.5 2 8 0 5.5-4.78 10-10 10Z"/>
+            <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+          </svg>
+        </div>
+        <!-- Title Group -->
+        <div class="header-title-group">
+          <span class="header-title">Soil Moisture Monitoring Platform</span>
+          <span class="header-subtitle">Real-Time Satellite-Based Soil Moisture Analysis</span>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <div class="header-right">
+        <nav class="header-nav" aria-label="Main navigation">
+          <a href="#" class="nav-btn">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span class="nav-label">Home</span>
+          </a>
+          <a href="#" class="nav-btn">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            <span class="nav-label">About</span>
+          </a>
+          <a href="#" class="nav-btn">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+            <span class="nav-label">How It Works</span>
+          </a>
+          <a href="#" class="nav-btn">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+            <span class="nav-label">Contact</span>
+          </a>
+        </nav>
+        <!-- User Avatar -->
+        <div class="user-avatar" aria-label="User profile">JD</div>
+      </div>
+    </header>
+
+    <!-- ==========================================================
+         MAIN CONTENT
+         ========================================================== -->
+    <main class="main-content" role="main">
+
+      <!-- ========================================================
+           DASHBOARD VIEW
+           ======================================================== -->
+      <div class="dashboard-view">
+
+        <!-- ======================================================
+             DASHBOARD UPPER SECTION
+             Sidebar (left) + Map Area (right)
+             ====================================================== -->
+        <div class="dashboard-upper-section">
+
+          <!-- ====================================================
+               SIDEBAR
+               ==================================================== -->
+          <aside class="sidebar" role="complementary" aria-label="Map controls sidebar">
+
+            <!-- Panel 1: Map Selection -->
+            <section class="panel">
+              <div class="panel-header" data-panel-toggle="map-selection" tabindex="0" role="button" aria-expanded="true">
+                <div class="panel-header-left">
+                  <svg class="panel-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>
+                  <span class="panel-header-title">Map Selection</span>
+                </div>
+                <svg class="panel-chevron" data-panel-chevron viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </div>
+              <div class="panel-body" data-panel-body="map-selection">
+                <div class="map-selection-content">
+
+                  <!-- Date Picker -->
+                  <div class="date-picker">
+                    <label class="date-picker-label" for="date-input">Select Date</label>
+                    <div class="date-input-wrapper">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                      <input
+                        type="text"
+                        id="date-input"
+                        class="date-input"
+                        readonly
+                        placeholder="Select a date"
+                      />
+                      <!-- Calendar Popover -->
+                      <div class="calendar-popover" id="calendar-popover">
+                        <div class="calendar-header">
+                          <button type="button" class="calendar-nav-btn" id="calendar-prev" aria-label="Previous month">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                          </button>
+                          <span class="calendar-month-year" id="calendar-month-year">May 2024</span>
+                          <button type="button" class="calendar-nav-btn" id="calendar-next" aria-label="Next month">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                          </button>
+                        </div>
+                        <div class="calendar-weekdays">
+                          <span class="calendar-weekday">Su</span>
+                          <span class="calendar-weekday">Mo</span>
+                          <span class="calendar-weekday">Tu</span>
+                          <span class="calendar-weekday">We</span>
+                          <span class="calendar-weekday">Th</span>
+                          <span class="calendar-weekday">Fr</span>
+                          <span class="calendar-weekday">Sa</span>
+                        </div>
+                        <div class="calendar-days" id="calendar-days"></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Generate Button -->
+                  <button type="button" class="btn-generate" id="btn-generate">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                    Generate Map
+                  </button>
+
+                </div>
+              </div>
+            </section>
+
+            <!-- Panel 2: Map Controls -->
+            <section class="panel">
+              <div class="panel-header" data-panel-toggle="map-controls" tabindex="0" role="button" aria-expanded="true">
+                <div class="panel-header-left">
+                  <svg class="panel-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                  <span class="panel-header-title">Map Controls</span>
+                </div>
+                <svg class="panel-chevron" data-panel-chevron viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </div>
+              <div class="panel-body" data-panel-body="map-controls">
+                <div class="layer-controls">
+
+                  <!-- Toggle: Soil Moisture -->
+                  <label class="toggle-item">
+                    <div class="toggle-item-left">
+                      <svg class="toggle-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+                      <span class="toggle-item-label">Soil Moisture</span>
+                    </div>
+                    <div class="toggle-switch">
+                      <input type="checkbox" data-layer-toggle="soil_moisture" checked aria-label="Toggle Soil Moisture layer" />
+                      <div class="toggle-track">
+                        <div class="toggle-knob"></div>
+                      </div>
+                    </div>
+                  </label>
+
+                  <!-- Toggle: Country Borders -->
+                  <label class="toggle-item">
+                    <div class="toggle-item-left">
+                      <svg class="toggle-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                      <span class="toggle-item-label">Country Borders</span>
+                    </div>
+                    <div class="toggle-switch">
+                      <input type="checkbox" data-layer-toggle="country_borders" checked aria-label="Toggle Country Borders layer" />
+                      <div class="toggle-track">
+                        <div class="toggle-knob"></div>
+                      </div>
+                    </div>
+                  </label>
+
+                  <!-- Toggle: Labels -->
+                  <label class="toggle-item">
+                    <div class="toggle-item-left">
+                      <svg class="toggle-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" x2="15" y1="20" y2="20"/><line x1="12" x2="12" y1="4" y2="20"/></svg>
+                      <span class="toggle-item-label">Labels</span>
+                    </div>
+                    <div class="toggle-switch">
+                      <input type="checkbox" data-layer-toggle="labels" aria-label="Toggle Labels layer" />
+                      <div class="toggle-track">
+                        <div class="toggle-knob"></div>
+                      </div>
+                    </div>
+                  </label>
+
+                </div>
+              </div>
+            </section>
+
+            <!-- Panel 3: Legend -->
+            <section class="panel">
+              <div class="panel-header" data-panel-toggle="legend" tabindex="0" role="button" aria-expanded="true">
+                <div class="panel-header-left">
+                  <svg class="panel-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h20"/><path d="M10 16V8"/><path d="M14 16V8"/></svg>
+                  <span class="panel-header-title">Legend</span>
+                </div>
+                <svg class="panel-chevron" data-panel-chevron viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </div>
+              <div class="panel-body" data-panel-body="legend">
+                <div class="legend-container">
+                  <div class="legend-bar-wrapper">
+                    <!-- Color Bar -->
+                    <div class="legend-bar" role="img" aria-label="Soil moisture legend gradient from 0% to 100%">
+                      <div class="legend-bar-segment" style="background-color: #dc2626;"></div>
+                      <div class="legend-bar-segment" style="background-color: #f97316;"></div>
+                      <div class="legend-bar-segment" style="background-color: #eab308;"></div>
+                      <div class="legend-bar-segment" style="background-color: #84cc16;"></div>
+                      <div class="legend-bar-segment" style="background-color: #22c55e;"></div>
+                      <div class="legend-bar-segment" style="background-color: #06b6d4;"></div>
+                      <div class="legend-bar-segment" style="background-color: #2563eb;"></div>
+                    </div>
+                    <!-- Labels -->
+                    <div class="legend-labels">
+                      <div class="legend-label">
+                        <span class="legend-label-value">0 – 10%</span>
+                        <span class="legend-label-name">Very Dry</span>
+                      </div>
+                      <div class="legend-label">
+                        <span class="legend-label-value">10 – 20%</span>
+                        <span class="legend-label-name">Dry</span>
+                      </div>
+                      <div class="legend-label">
+                        <span class="legend-label-value">20 – 30%</span>
+                        <span class="legend-label-name">Moderately Dry</span>
+                      </div>
+                      <div class="legend-label">
+                        <span class="legend-label-value">30 – 40%</span>
+                        <span class="legend-label-name">Mild Moisture</span>
+                      </div>
+                      <div class="legend-label">
+                        <span class="legend-label-value">40 – 60%</span>
+                        <span class="legend-label-name">Adequate</span>
+                      </div>
+                      <div class="legend-label">
+                        <span class="legend-label-value">60 – 80%</span>
+                        <span class="legend-label-name">High Moisture</span>
+                      </div>
+                      <div class="legend-label">
+                        <span class="legend-label-value">80 – 100%</span>
+                        <span class="legend-label-name">Saturated</span>
+                      </div>
+                    </div>
+                  </div>
+                  <p class="legend-footer">
+                    Surface Soil Moisture (0–5 cm depth)
+                  </p>
+                </div>
+              </div>
+            </section>
+
+          </aside>
+
+          <!-- ====================================================
+               MAP AREA
+               ==================================================== -->
+          <div class="map-area-wrapper">
+
+            <div class="map-container">
+
+              <!-- Map Element — OpenLayers + GeoServer WMS will initialize here -->
+              <div id="map"></div>
+
+              <!-- Map Toolbar (zoom, home, fullscreen) — top-left floating -->
+              <div class="map-toolbar" role="toolbar" aria-label="Map controls">
+                <button class="toolbar-btn" title="Zoom In" aria-label="Zoom in">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/><line x1="11" x2="11" y1="8" y2="14"/><line x1="8" x2="14" y1="11" y2="11"/></svg>
+                </button>
+                <button class="toolbar-btn" title="Zoom Out" aria-label="Zoom out">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/><line x1="8" x2="14" y1="11" y2="11"/></svg>
+                </button>
+                <button class="toolbar-btn" title="Home" aria-label="Reset to home view">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                </button>
+                <button class="toolbar-btn" title="Fullscreen" aria-label="Toggle fullscreen">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+                </button>
+              </div>
+
+              <!-- Basemap Switcher — top-right floating -->
+              <div class="basemap-switcher" role="radiogroup" aria-label="Basemap selection">
+                <button class="basemap-btn" data-basemap="light" role="radio" aria-checked="false">Light</button>
+                <button class="basemap-btn" data-basemap="dark" role="radio" aria-checked="false">Dark</button>
+                <button class="basemap-btn basemap-btn--active" data-basemap="satellite" role="radio" aria-checked="true">Satellite</button>
+              </div>
+
+              <!-- Map Badges — bottom-left floating -->
+              <div class="map-badges">
+                <span class="map-badge map-badge--wms">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+                  WMS Connected
+                </span>
+                <span class="map-badge map-badge--epsg">
+                  <svg class="badge-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                  EPSG:4326
+                </span>
+              </div>
+
+              <!-- Scale Bar — bottom-right floating -->
+              <div class="scale-bar">
+                <span class="scale-bar-text">100 km</span>
+                <div class="scale-bar-line" aria-hidden="true"></div>
+                <span class="scale-bar-attribution">© OpenStreetMap</span>
+              </div>
+
+              <!-- Loading Overlay (hidden by default) -->
+              <div class="map-loading-overlay map-loading-overlay--hidden" id="map-loading-overlay">
+                <div class="loading-spinner" aria-hidden="true"></div>
+                <span class="loading-text">Loading map data…</span>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ======================================================
+             DASHBOARD LOWER SECTION
+             Bottom Info Cards
+             ====================================================== -->
+        <div class="dashboard-lower-section">
+
+          <div class="bottom-info-bar">
+
+            <!-- Info Card: Selected Date -->
+            <div class="info-card" id="info-card-date">
+              <div class="info-card-icon info-card-icon--green">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+              </div>
+              <div class="info-card-content">
+                <span class="info-card-subtitle">SELECTED DATE</span>
+                <span class="info-card-title">May 15, 2024</span>
+              </div>
+            </div>
+
+            <!-- Info Card: Satellite Source -->
+            <div class="info-card">
+              <div class="info-card-icon info-card-icon--blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="16" x="4" y="4" rx="2"/><rect width="6" height="6" x="9" y="9" rx="1"/><path d="M15 2v2"/><path d="M15 20v2"/><path d="M2 15h2"/><path d="M20 15h2"/></svg>
+              </div>
+              <div class="info-card-content">
+                <span class="info-card-subtitle">SATELLITE SOURCE</span>
+                <span class="info-card-title">Sentinel-1 (C-band)</span>
+              </div>
+            </div>
+
+            <!-- Info Card: Resolution -->
+            <div class="info-card">
+              <div class="info-card-icon info-card-icon--amber">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"/><path d="m14.5 6.5 3 3"/><path d="m8 6 2 2"/><path d="m16 10 2 2"/><path d="m10 12 2 2"/></svg>
+              </div>
+              <div class="info-card-content">
+                <span class="info-card-subtitle">RESOLUTION</span>
+                <span class="info-card-title">1 km × 1 km</span>
+              </div>
+            </div>
+
+            <!-- Info Card: Coverage -->
+            <div class="info-card">
+              <div class="info-card-icon info-card-icon--indigo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              </div>
+              <div class="info-card-content">
+                <span class="info-card-subtitle">COVERAGE</span>
+                <span class="info-card-title">Global (60°N–56°S)</span>
+              </div>
+            </div>
+
+            <!-- Info Card: Validation -->
+            <div class="info-card">
+              <div class="info-card-icon info-card-icon--green">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              </div>
+              <div class="info-card-content">
+                <span class="info-card-subtitle">VALIDATION</span>
+                <span class="info-card-title">In-Situ Network (RMSE &lt; 0.05)</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- ============================================================
+       SCRIPTS
+       ============================================================ -->
+  <script src="js/mock-data.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/sidebar.js"></script>
+  <script src="js/controls.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>

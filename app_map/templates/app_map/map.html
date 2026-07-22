@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soil Moisture Platform</title>
+    <link rel="stylesheet" href="https://unpkg.com/ol@latest/dist/ol.css" />
+    <style>
+        /* General styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+            font-size: 24px;
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+
+        #map {
+            height: 70vh;
+            width: 100%;
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+        }
+
+        .form-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background-color: white;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="date"] {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 768px) {
+            main {
+                padding: 10px;
+            }
+
+            .form-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+
+        /* Attribution */
+        .ol-attribution{
+            left:10px!important;
+            right:auto!important;
+            bottom:10px!important;
+            top:auto!important;
+
+            background:rgba(255,255,255,.85);
+            border-radius:6px;
+            padding:4px 8px;
+        }
+
+        .ol-attribution button{
+            display:none;
+        }
+
+        /* Legend */
+        .legend{
+            position:absolute;
+            right:20px;
+            bottom:20px;
+            background:white;
+            padding:10px;
+            border-radius:8px;
+            box-shadow:0 0 10px rgba(0,0,0,.25);
+            z-index:1000;
+        }
+
+        .legend h4{
+            margin:0 0 8px;
+            text-align:center;
+        }
+
+        .legend img{
+            width:50px;
+        }
+
+
+    </style>
+</head>
+<body>
+    <header>Draw and Edit Polygon</header>
+    <main>
+        <div id="map"></div>
+
+        <!-- Legend -->
+        <div class="legend">
+            <h4>Soil Moisture</h4>
+            <img id="legendImg" alt="Legend">
+        </div>
+
+
+        <div class="form-container">
+            <label for="dateInput">Select Date:</label>
+            <input type="date" id="dateInput" />
+            <button id="saveBtn">Generate Map</button>
+        </div>
+    </main>
+
+    <input type="hidden" id="csrfToken" value="{{ csrf_token }}">
+
+    <script src="https://unpkg.com/ol@latest/dist/ol.js"></script>
+    <script>
+        // Initialize the base map layer
+        const baseLayer = new ol.layer.Tile({
+            source: new ol.source.OSM()
+        });
+    
+        // Create a vector layer to hold polygons
+        const vectorLayer = new ol.layer.Vector({
+            source: new ol.source.Vector()
+        });
+
+        // Create the map object
+        const map = new ol.Map({
+            target: 'map',
+            layers: [
+                baseLayer,
+                vectorLayer
+            ],
+            view: new ol.View({
+                center: [0, 0],
+                zoom: 2
+            })
+        });
+
+        let moistureLayer = null;
+
+        // Add interaction to draw polygons
+        const draw = new ol.interaction.Draw({
+            source: vectorLayer.getSource(),
+            type: 'Polygon'
+        });
+        map.addInteraction(draw);
+
+        // Add interaction to modify polygons
+        const modify = new ol.interaction.Modify({
+            source: vectorLayer.getSource()
+        });
+        map.addInteraction(modify);
+
+        let lastPolygonCoordinates = []; // Store the last drawn polygon's coordinates
+
+        // Function to clear previous polygons
+        function clearPreviousPolygons() {
+            const source = vectorLayer.getSource();
+            source.clear(); // Remove all features from the vector layer
+        }
+
+        // Draw end event to handle polygon drawing
+        draw.on('drawend', function (event) {
+            clearPreviousPolygons(); // Clear previous polygons
+
+            const feature = event.feature;
+            const geometry = feature.getGeometry();
+            lastPolygonCoordinates = geometry.getCoordinates()[0].map(coord => {
+                return ol.proj.toLonLat(coord); // Transform to Lat/Lon
+            });
+
+            // Optionally set a style for the polygon
+            feature.setStyle(new ol.style.Style({
+                fill: new ol.style.Fill({
+                    color: 'rgba(0, 255, 0, 0.5)' // Green fill
+                }),
+                stroke: new ol.style.Stroke({
+                    color: 'rgba(0, 0, 255, 1)', // Blue outline
+                    width: 2
+                })
+            }));
+        });
+
+        // Save button functionality
+        document.getElementById('saveBtn').onclick = function() {
+            const dateInput = document.getElementById('dateInput').value;
+
+            if (!lastPolygonCoordinates.length) {
+                alert("Please draw a polygon first.");
+                return;
+            }
+
+            if (!dateInput) {
+                alert("Please select a date.");
+                return;
+            }
+
+            const csrfToken = document.getElementById('csrfToken').value;
+
+            const data = {
+                polygon: lastPolygonCoordinates,
+                date: dateInput
+            };
+
+            ('/save-polygon/', {
+                method: 'POST',
+                hfetcheaders: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Failed to save polygon.");
+                }
+                return response.json();
+            })
+            .then(result => {
+
+                if (moistureLayer) {
+                    map.removeLayer(moistureLayer);
+                }
+
+                moistureLayer = new ol.layer.Tile({
+                    source: new ol.source.TileWMS({
+                        url: 'http://localhost:8080/geoserver/demo/wms',
+                        params: {
+                            LAYERS: result.layer_info,
+                            STYLES: 'soil_moisture',
+                            FORMAT: 'image/png',
+                            TRANSPARENT: true,
+                            TILED: true,
+                            VERSION: '1.1.1',
+                            _ts: Date.now()
+                        },
+                        serverType: 'geoserver',
+                        transition: 0
+                    })
+                });
+
+                map.addLayer(moistureLayer);
+
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error saving polygon!');
+            });
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,283 @@
+/* ==========================================================================
+   Map Area Wrapper
+   ========================================================================== */
+
+.map-area-wrapper {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  height: 500px;
+  min-width: 0;
+}
+
+
+/* ==========================================================================
+   Map Container
+   ========================================================================== */
+
+.map-container {
+  position: relative;
+  flex: 1;
+  background-color: var(--color-slate-200);
+  border-radius: var(--radius-2xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--color-slate-200);
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+}
+
+/* OpenLayers viewport border-radius fix */
+.ol-viewport {
+  border-radius: inherit;
+}
+
+
+/* ==========================================================================
+   Map Toolbar (top-left floating)
+   ========================================================================== */
+
+.map-toolbar {
+  position: absolute;
+  top: var(--space-4);
+  left: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  z-index: 10;
+}
+
+.toolbar-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  background-color: var(--color-white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  color: var(--color-slate-600);
+  transition: all var(--transition-fast);
+}
+
+.toolbar-btn:hover {
+  background-color: var(--color-emerald-50);
+  color: var(--color-emerald-600);
+}
+
+.toolbar-btn svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+
+/* ==========================================================================
+   Basemap Switcher (top-right floating)
+   ========================================================================== */
+
+.basemap-switcher {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  display: flex;
+  gap: var(--space-1);
+  padding: var(--space-1);
+  background-color: var(--color-white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  z-index: 10;
+}
+
+.basemap-btn {
+  padding: var(--space-1-5) var(--space-3);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--color-slate-500);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.basemap-btn:hover {
+  color: var(--color-slate-700);
+}
+
+.basemap-btn--active {
+  background-color: var(--color-emerald-600);
+  color: var(--color-white);
+}
+
+.basemap-btn--active:hover {
+  background-color: var(--color-emerald-700);
+  color: var(--color-white);
+}
+
+
+/* ==========================================================================
+   Scale Bar (bottom-right floating)
+   ========================================================================== */
+
+.scale-bar {
+  position: absolute;
+  bottom: var(--space-3);
+  right: var(--space-3);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1-5) var(--space-2-5);
+  background-color: rgb(255 255 255 / 0.95);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  z-index: 10;
+}
+
+.scale-bar-line {
+  width: 2.5rem;
+  height: 2px;
+  background-color: var(--color-slate-700);
+  position: relative;
+}
+
+.scale-bar-line::before,
+.scale-bar-line::after {
+  content: "";
+  position: absolute;
+  top: -3px;
+  width: 2px;
+  height: 8px;
+  background-color: var(--color-slate-700);
+}
+
+.scale-bar-line::before {
+  left: 0;
+}
+
+.scale-bar-line::after {
+  right: 0;
+}
+
+.scale-bar-text {
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: var(--color-slate-700);
+  white-space: nowrap;
+}
+
+.scale-bar-attribution {
+  font-size: 0.5625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-slate-400);
+  white-space: nowrap;
+}
+
+
+/* ==========================================================================
+   Map Badges (bottom-left floating)
+   ========================================================================== */
+
+.map-badges {
+  position: absolute;
+  bottom: var(--space-4);
+  left: var(--space-4);
+  display: flex;
+  gap: var(--space-2);
+  z-index: 10;
+}
+
+.map-badge {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  padding: var(--space-1-5) var(--space-2-5);
+  border-radius: var(--radius-full);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+  white-space: nowrap;
+}
+
+.map-badge svg {
+  width: 0.875rem;
+  height: 0.875rem;
+  flex-shrink: 0;
+}
+
+.map-badge--wms {
+  background-color: rgb(5 150 105 / 0.9);
+  color: var(--color-white);
+}
+
+.map-badge--epsg {
+  background-color: rgb(30 41 59 / 0.9);
+  color: var(--color-white);
+}
+
+.map-badge--epsg .badge-check {
+  color: var(--color-emerald-400);
+}
+
+
+/* ==========================================================================
+   Loading Overlay
+   ========================================================================== */
+
+.map-loading-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  background-color: rgb(15 23 42 / 0.4);
+  z-index: 20;
+  backdrop-filter: blur(2px);
+}
+
+.map-loading-overlay--hidden {
+  display: none;
+}
+
+.loading-spinner {
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 3px solid var(--color-white);
+  border-top-color: var(--color-emerald-400);
+  border-radius: var(--radius-full);
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-text {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-white);
+  text-shadow: var(--shadow-md);
+}
+
+
+/* ==========================================================================
+   Color Legend Variables (for map gradient)
+   ========================================================================== */
+
+:root {
+  --legend-color-0-10: #dc2626;
+  --legend-color-10-20: #f97316;
+  --legend-color-20-30: #eab308;
+  --legend-color-30-40: #84cc16;
+  --legend-color-40-60: #22c55e;
+  --legend-color-60-80: #06b6d4;
+  --legend-color-80-100: #2563eb;
+}

@@ -1,0 +1,243 @@
+/* ==========================================================================
+   Sidebar
+   ========================================================================== */
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: 100%;
+}
+
+
+/* ==========================================================================
+   Panel Card
+   ========================================================================== */
+
+.panel {
+  background-color: var(--color-white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-slate-200);
+  overflow: hidden;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4);
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  transition: background-color var(--transition-fast);
+}
+
+.panel-header:hover {
+  background-color: var(--color-slate-50);
+}
+
+.panel-header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2-5);
+}
+
+.panel-header-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--color-slate-400);
+  flex-shrink: 0;
+}
+
+.panel-header-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-slate-400);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.panel-chevron {
+  width: 1rem;
+  height: 1rem;
+  color: var(--color-slate-400);
+  transition: transform var(--transition-normal);
+  flex-shrink: 0;
+}
+
+.panel-chevron--collapsed {
+  transform: rotate(-90deg);
+}
+
+.panel-body {
+  padding: 0 var(--space-4) var(--space-4);
+}
+
+.panel-body--hidden {
+  display: none;
+}
+
+
+/* ==========================================================================
+   Legend Panel
+   ========================================================================== */
+
+.legend-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.legend-bar-wrapper {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-3);
+}
+
+.legend-bar {
+  width: 0.75rem;
+  height: 180px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-inner);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.legend-bar-segment {
+  flex: 1;
+  position: relative;
+}
+
+.legend-bar-segment:first-child {
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.legend-bar-segment:last-child {
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+}
+
+.legend-bar-segment:only-child {
+  border-radius: var(--radius-md);
+}
+
+.legend-labels {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+  padding: var(--space-1) 0;
+}
+
+.legend-label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.legend-label-value {
+  color: var(--color-slate-700);
+}
+
+.legend-label-name {
+  color: var(--color-slate-500);
+  font-weight: 400;
+}
+
+.legend-footer {
+  font-size: 0.625rem;
+  font-style: italic;
+  color: var(--color-slate-400);
+  margin-top: var(--space-1);
+}
+
+
+/* ==========================================================================
+   Layer Controls
+   ========================================================================== */
+
+.layer-controls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.toggle-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2-5) var(--space-3);
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-fast);
+  cursor: pointer;
+}
+
+.toggle-item:hover {
+  background-color: var(--color-emerald-50);
+}
+
+.toggle-item-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2-5);
+}
+
+.toggle-item-icon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--color-slate-600);
+  flex-shrink: 0;
+}
+
+.toggle-item-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-slate-700);
+}
+
+/* Toggle Switch */
+.toggle-switch {
+  position: relative;
+  width: 2.75rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+}
+
+.toggle-switch input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-track {
+  position: absolute;
+  inset: 0;
+  background-color: var(--color-gray-200);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: background-color var(--transition-normal);
+}
+
+.toggle-knob {
+  position: absolute;
+  top: 0.125rem;
+  left: 0.125rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  background-color: var(--color-white);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-normal);
+}
+
+.toggle-switch input:checked + .toggle-track {
+  background-color: var(--color-emerald-600);
+}
+
+.toggle-switch input:checked + .toggle-track .toggle-knob {
+  transform: translateX(1.25rem);
+}
