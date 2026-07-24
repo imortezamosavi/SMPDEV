@@ -1,0 +1,1 @@
+type MapStyle = "street" | "satellite";
