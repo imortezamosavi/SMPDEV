@@ -1,6 +1,7 @@
 "use client";
 
 import { format } from "date-fns";
+import bbox from "@turf/bbox";
 import {
   CalendarDays,
   CircleCheckBig,
@@ -40,6 +41,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { useState } from "react";
+import { mockPrediction } from "@/lib/mockPrediction";
+import { ModeToggle } from "./ModeToggle";
 
 export function AppSidebar() {
   const { startDrawing } = useMapActions();
@@ -47,42 +50,88 @@ export function AppSidebar() {
 
   const polygon = useMapStore((s) => s.polygon);
   const selectedDate = useMapStore((s) => s.selectedDate);
+  const map = useMapStore((s) => s.map);
 
   const setSelectedDate = useMapStore((s) => s.setSelectedDate);
 
   const isPolygonCreated = !!polygon;
 
   const handleGenerateMap = () => {
-    if (!polygon || !selectedDate) {
-      console.warn("Polygon or date is missing.");
+    if (!polygon || !selectedDate || !map) {
+      console.warn("Missing data");
       return;
     }
 
-    const payload = {
-      date: selectedDate,
-      polygon: polygon.geometry.coordinates,
-    };
+    const sourceId = "prediction-layer";
+    const layerId = "prediction-fill";
 
-    console.log("Selected Date:", payload.date);
-    console.log("Polygon:", payload.polygon);
-    console.log("Payload:", payload);
+    if (map.getSource(sourceId)) {
+      map.removeLayer(layerId);
+      map.removeSource(sourceId);
+    }
 
-    // TODO:
-    // await predictMap(payload);
+    map.addSource(sourceId, {
+      type: "geojson",
+      data: mockPrediction,
+    });
+
+    map.addLayer({
+      id: layerId,
+      type: "fill",
+      source: sourceId,
+      paint: {
+        "fill-color": "#22c55e",
+        "fill-opacity": 0.5,
+      },
+    });
+
+    const bounds = bbox(mockPrediction);
+
+    map.fitBounds(
+      [
+        [bounds[0], bounds[1]],
+        [bounds[2], bounds[3]],
+      ],
+      {
+        padding: 50,
+        duration: 1000,
+      },
+    );
+
+    console.log("Prediction displayed");
   };
 
   return (
-    <Sidebar className="border-r bg-background" collapsible="icon">
-      <SidebarHeader className="border-b py-5">
-        <h2 className="text-lg font-semibold">Soil Moisture</h2>
+    <Sidebar
+      className="border-r bg-background flex flex-col"
+      collapsible="icon"
+    >
+      {" "}
+      <SidebarHeader className="border-b px-4 py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
+              <Droplets className="h-5 w-5 text-primary" />
+            </div>
 
-        <p className="text-xs text-muted-foreground">Monitoring Dashboard</p>
+            <div>
+              <h2 className="text-sm font-semibold leading-none">
+                Soil Moisture
+              </h2>
+
+              <p className="mt-1 text-xs text-muted-foreground">
+                Satellite Monitoring
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1">
+            <ModeToggle />
+          </div>
+        </div>
       </SidebarHeader>
-
       <SidebarContent>
-        <Accordion defaultValue={["workflow", "layers", "legend"]}>
-          {/* Workflow */}
-
+        <Accordion defaultValue={["workflow"]}>
           <AccordionItem value="workflow">
             <AccordionTrigger className="px-4">
               <div className="flex items-center gap-2">
@@ -200,38 +249,29 @@ export function AppSidebar() {
 
           {/* Legend */}
 
-          <AccordionItem value="legend">
-            <AccordionTrigger className="px-4">
-              <div className="flex items-center gap-2">
-                <Map size={18} />
-                Legend
-              </div>
-            </AccordionTrigger>
+          <div className="rounded-lg border p-4">
+            <h4 className="mb-3 text-sm font-medium">Soil Moisture Legend</h4>
 
-            <AccordionContent className="px-4">
-              <div className="rounded-lg border p-4">
-                <div className="mb-4 flex h-4 overflow-hidden rounded-full">
-                  <div className="flex-1 bg-red-600" />
-                  <div className="flex-1 bg-orange-500" />
-                  <div className="flex-1 bg-yellow-400" />
-                  <div className="flex-1 bg-lime-400" />
-                  <div className="flex-1 bg-green-500" />
-                  <div className="flex-1 bg-cyan-500" />
-                  <div className="flex-1 bg-blue-600" />
-                </div>
+            <div className="mb-4 flex h-4 overflow-hidden rounded-full">
+              <div className="flex-1 bg-red-600" />
+              <div className="flex-1 bg-orange-500" />
+              <div className="flex-1 bg-yellow-400" />
+              <div className="flex-1 bg-lime-400" />
+              <div className="flex-1 bg-green-500" />
+              <div className="flex-1 bg-cyan-500" />
+              <div className="flex-1 bg-blue-600" />
+            </div>
 
-                <div className="space-y-2 text-xs">
-                  <Legend label="0–10%" text="Very Dry" />
-                  <Legend label="10–20%" text="Dry" />
-                  <Legend label="20–30%" text="Moderately Dry" />
-                  <Legend label="30–40%" text="Mild Moisture" />
-                  <Legend label="40–60%" text="Adequate" />
-                  <Legend label="60–80%" text="High Moisture" />
-                  <Legend label="80–100%" text="Saturated" />
-                </div>
-              </div>
-            </AccordionContent>
-          </AccordionItem>
+            <div className="space-y-2 text-xs">
+              <Legend label="0–10%" text="Very Dry" />
+              <Legend label="10–20%" text="Dry" />
+              <Legend label="20–30%" text="Moderately Dry" />
+              <Legend label="30–40%" text="Mild Moisture" />
+              <Legend label="40–60%" text="Adequate" />
+              <Legend label="60–80%" text="High Moisture" />
+              <Legend label="80–100%" text="Saturated" />
+            </div>
+          </div>
         </Accordion>
       </SidebarContent>
     </Sidebar>

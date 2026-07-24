@@ -32,7 +32,7 @@ export function MapStyleSwitcher({ value, onChange }: MapStyleSwitcherProps) {
           size="sm"
           onClick={() => onChange("satellite")}
           className={cn(
-            "min-w-[110px] justify-center transition-all",
+            "min-w-27.5 justify-center transition-all",
             value !== "satellite" && "hover:bg-muted",
           )}
         >

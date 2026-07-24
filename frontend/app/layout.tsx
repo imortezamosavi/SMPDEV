@@ -8,6 +8,7 @@ import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { cn } from "@/lib/utils";
+import { ThemeProvider } from "next-themes";
 
 const geistHeading = Geist({
   subsets: ["latin"],
@@ -31,7 +32,6 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Soil Moisture Monitoring Platform",
-  description: "Satellite-based soil moisture monitoring dashboard",
 };
 
 export default function RootLayout({
@@ -51,13 +51,20 @@ export default function RootLayout({
       )}
     >
       <body className="h-screen overflow-hidden">
-        <SidebarProvider defaultOpen>
-          <AppSidebar />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <SidebarProvider defaultOpen>
+            <AppSidebar />
 
-          <SidebarInset>
-            <main className="h-screen">{children}</main>
-          </SidebarInset>
-        </SidebarProvider>
+            <SidebarInset>
+              <main className="h-screen">{children}</main>
+            </SidebarInset>
+          </SidebarProvider>{" "}
+        </ThemeProvider>
       </body>
     </html>
   );
