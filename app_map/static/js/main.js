@@ -11,11 +11,8 @@ const vectorLayer = new ol.layer.Vector({
 
 // Create the map object
 const map = new ol.Map({
-    target: 'map',
 
-    controls: ol.control.defaults({
-        attribution: false
-    }),
+    target: 'map',
 
     layers: [
         baseLayer,
@@ -23,8 +20,10 @@ const map = new ol.Map({
     ],
 
     view: new ol.View({
-        center: [0, 0],zoom: 2
+        center: ol.proj.fromLonLat([0, 0]),
+        zoom: 2
     })
+
 });
 
 // Add interaction to draw polygons
