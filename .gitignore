@@ -1,9 +1,5 @@
-# Python cache
 *.pyc
-__pycache__/
 
-# Evaluation results
-/app_map/map/evaluation_results/**
-
-# Downloads
-/app_map/downloads/**
+app_map/downloads/
+app_map/map/basic_files/mrsp-414109-d4ddd84517dc.json
+app_map/map/evaluation_results/

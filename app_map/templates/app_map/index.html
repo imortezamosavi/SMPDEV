@@ -46,30 +46,74 @@
 <main class="app-layout">
 
 
-    <div class="form-container">
-
-        <label for="dateInput">
-            <i class="bi bi-calendar3"></i>
-            Observation Date
-        </label>
-
-        <input
-            type="date"
-            id="dateInput"
-        >
+    <!-- Left Sidebar -->
+    <aside class="sidebar">
 
 
-        <button id="saveBtn">
+        <div class="form-container">
 
-            <i class="bi bi-map"></i>
+            <label for="dateInput">
+                <i class="bi bi-calendar3"></i>
+                Observation Date
+            </label>
 
-            Generate Map
+            <input
+                type="date"
+                id="dateInput"
+            >
 
-        </button>
 
-    </div>
+            <button id="saveBtn">
+
+                <i class="bi bi-map"></i>
+
+                Generate Map
+
+            </button>
+
+        </div>
 
 
+
+        <div class="legend-panel">
+
+            <h3>
+                💧 Soil Moisture Legend
+            </h3>
+
+
+            <div class="legend-content">
+
+                <div class="color-bar"></div>
+
+
+                <div class="legend-labels">
+
+                    <span>100%</span>
+                    <span>80%</span>
+                    <span>60%</span>
+                    <span>40%</span>
+                    <span>20%</span>
+                    <span>0%</span>
+
+                </div>
+
+            </div>
+
+
+            <p class="legend-description">
+                Higher values indicate wetter soil conditions.
+            </p>
+
+
+        </div>
+
+
+    </aside>
+
+
+
+    <!-- Map -->
     <div id="map"></div>
 
 
