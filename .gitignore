@@ -1,2 +1,9 @@
+# Python cache
 *.pyc
-app_map/map/basic_files/*.json
+__pycache__/
+
+# Evaluation results
+/app_map/map/evaluation_results/**
+
+# Downloads
+/app_map/downloads/**
