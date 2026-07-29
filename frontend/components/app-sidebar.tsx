@@ -1,14 +1,10 @@
 "use client";
 
 import { format } from "date-fns";
-import bbox from "@turf/bbox";
 import {
   CalendarDays,
   CircleCheckBig,
   Map,
-  Droplets,
-  Globe,
-  Type,
   Pencil,
   Sparkles,
   Layers3,
@@ -58,49 +54,51 @@ export function AppSidebar() {
 
   const isPolygonCreated = !!polygon;
 
-  const handleGenerateMap = () => {
-    if (!polygon || !selectedDate || !map) {
-      console.warn("Missing data");
-      return;
+  const handleGenerateMap = async () => {
+    if (!polygon || !selectedDate || !map) return;
+
+    try {
+      const response = await fetch(`${`http://localhost:8000`}/save-polygon/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          polygon: polygon.geometry.coordinates[0],
+          date: format(selectedDate, "yyyy-MM-dd"),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to generate prediction");
+      }
+
+      const geojson = await response.json();
+
+      // remove old layer
+      if (map.getSource("prediction-layer")) {
+        map.removeLayer("prediction-fill");
+        map.removeSource("prediction-layer");
+      }
+
+      // add new prediction
+      map.addSource("prediction-layer", {
+        type: "geojson",
+        data: geojson,
+      });
+
+      map.addLayer({
+        id: "prediction-fill",
+        type: "fill",
+        source: "prediction-layer",
+        paint: {
+          "fill-color": "#22c55e",
+          "fill-opacity": 0.5,
+        },
+      });
+    } catch (error) {
+      console.error(error);
     }
-
-    const sourceId = "prediction-layer";
-    const layerId = "prediction-fill";
-
-    if (map.getSource(sourceId)) {
-      map.removeLayer(layerId);
-      map.removeSource(sourceId);
-    }
-
-    map.addSource(sourceId, {
-      type: "geojson",
-      data: mockPrediction,
-    });
-
-    map.addLayer({
-      id: layerId,
-      type: "fill",
-      source: sourceId,
-      paint: {
-        "fill-color": "#22c55e",
-        "fill-opacity": 0.5,
-      },
-    });
-
-    const bounds = bbox(mockPrediction);
-
-    map.fitBounds(
-      [
-        [bounds[0], bounds[1]],
-        [bounds[2], bounds[3]],
-      ],
-      {
-        padding: 50,
-        duration: 1000,
-      },
-    );
-
-    console.log("Prediction displayed");
   };
 
   return (
@@ -184,7 +182,7 @@ export function AppSidebar() {
                         if (!date) return;
 
                         setSelectedDate(date);
-                        setOpen(false); // close popover
+                        setOpen(false);
                       }}
                     />
                   </PopoverContent>
@@ -219,26 +217,5 @@ export function AppSidebar() {
         </Accordion>
       </SidebarContent>
     </Sidebar>
-  );
-}
-
-function Layer({
-  title,
-  icon,
-  defaultChecked,
-}: {
-  title: string;
-  icon: React.ReactNode;
-  defaultChecked?: boolean;
-}) {
-  return (
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-3">
-        {icon}
-        <span>{title}</span>
-      </div>
-
-      <Switch defaultChecked={defaultChecked} />
-    </div>
   );
 }
