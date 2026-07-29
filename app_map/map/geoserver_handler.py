@@ -88,7 +88,7 @@ class GeoserverHandler:
                     raster_path=tiff,
                     style_name=style_name,
                     workspace=workspace,
-                    color_ramp='RdBu_r'
+                    color_ramp='Blues'
                 )
 
                 # apply style
