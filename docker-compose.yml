@@ -28,5 +28,18 @@ services:
       DEBUG: "True"
     restart: always
 
+  frontend:
+    build:
+      context: ./frontend
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+    depends_on:
+      - app
+      - geoserver
+    restart: always
+
 volumes:
   geoserver_volume:
