@@ -1,6 +1,7 @@
 "use client";
 
 import { format } from "date-fns";
+import type { Feature, Polygon } from "geojson";
 import {
   CalendarDays,
   CircleCheckBig,
@@ -35,30 +36,65 @@ import {
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
 import { useState } from "react";
-import { mockPrediction } from "@/lib/mockPrediction";
 import { AppSidebarHeader } from "./sidebar/SidebarHeader";
 import { Legend } from "./Legend";
 import { Layers } from "./sidebar/Layers";
+import { addPredictionRasterLayer } from "@/lib/predictionLayer";
+
+function getPolygonBounds(
+  polygon: Feature<Polygon>,
+): [[number, number], [number, number]] {
+  const coordinates = polygon.geometry.coordinates[0] as [number, number][];
+
+  const bounds = coordinates.reduce(
+    ([minLng, minLat, maxLng, maxLat], [lng, lat]) => [
+      Math.min(minLng, lng),
+      Math.min(minLat, lat),
+      Math.max(maxLng, lng),
+      Math.max(maxLat, lat),
+    ],
+    [Infinity, Infinity, -Infinity, -Infinity],
+  );
+
+  return [
+    [bounds[0], bounds[1]],
+    [bounds[2], bounds[3]],
+  ];
+}
 
 export function AppSidebar() {
   const { startDrawing } = useMapActions();
   const [open, setOpen] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const polygon = useMapStore((s) => s.polygon);
   const selectedDate = useMapStore((s) => s.selectedDate);
   const map = useMapStore((s) => s.map);
+  const soilMoistureVisible = useMapStore((s) => s.soilMoistureVisible);
 
   const setSelectedDate = useMapStore((s) => s.setSelectedDate);
+  const setPredictionLayerInfo = useMapStore(
+    (s) => s.setPredictionLayerInfo,
+  );
+  const setPredictionLayerReady = useMapStore(
+    (s) => s.setPredictionLayerReady,
+  );
 
   const isPolygonCreated = !!polygon;
 
   const handleGenerateMap = async () => {
     if (!polygon || !selectedDate || !map) return;
 
+    setIsGenerating(true);
+    setError(null);
+
     try {
-      const response = await fetch(`${`http://localhost:8000`}/save-polygon/`, {
+      const backendUrl =
+        process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:8000";
+
+      const response = await fetch(`${backendUrl}/save-polygon/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -69,35 +105,53 @@ export function AppSidebar() {
         }),
       });
 
+      const payload = (await response.json()) as {
+        layer_info?: string;
+        error?: string;
+      };
+
       if (!response.ok) {
-        throw new Error("Failed to generate prediction");
+        throw new Error(
+          payload?.error ?? "Failed to generate prediction",
+        );
       }
 
-      const geojson = await response.json();
-
-      // remove old layer
-      if (map.getSource("prediction-layer")) {
-        map.removeLayer("prediction-fill");
-        map.removeSource("prediction-layer");
+      if (!payload.layer_info) {
+        throw new Error("The backend did not return a GeoServer layer.");
       }
 
-      // add new prediction
-      map.addSource("prediction-layer", {
-        type: "geojson",
-        data: geojson,
-      });
+      const layerInfo = payload.layer_info;
+      setPredictionLayerInfo(layerInfo);
+      setPredictionLayerReady(false);
 
-      map.addLayer({
-        id: "prediction-fill",
-        type: "fill",
-        source: "prediction-layer",
-        paint: {
-          "fill-color": "#22c55e",
-          "fill-opacity": 0.5,
-        },
-      });
+      const addPredictionLayer = () => {
+        if (!map.isStyleLoaded()) {
+          map.once("style.load", addPredictionLayer);
+          return;
+        }
+
+        const layerAdded = addPredictionRasterLayer(
+          map,
+          layerInfo,
+          soilMoistureVisible,
+        );
+        setPredictionLayerReady(layerAdded);
+
+        map.fitBounds(getPolygonBounds(polygon), {
+          padding: 50,
+          maxZoom: 16,
+          duration: 800,
+        });
+      };
+
+      addPredictionLayer();
     } catch (error) {
       console.error(error);
+      setError(
+        error instanceof Error ? error.message : "Failed to generate map",
+      );
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -191,11 +245,17 @@ export function AppSidebar() {
                 <Button
                   onClick={handleGenerateMap}
                   className="w-full"
-                  disabled={!polygon || !selectedDate}
+                  disabled={!polygon || !selectedDate || isGenerating}
                 >
                   <Sparkles className="mr-2 h-4 w-4" />
-                  Generate Map
+                  {isGenerating ? "Generating..." : "Generate Map"}
                 </Button>
+
+                {error && (
+                  <p className="text-xs text-destructive" role="alert">
+                    {error}
+                  </p>
+                )}
               </div>
             </AccordionContent>
           </AccordionItem>

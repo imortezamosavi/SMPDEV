@@ -7,8 +7,8 @@ import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import streetStyle from "@/lib/mapStyle/streetStyles";
 import satelliteStyle from "@/lib/mapStyle/satelliteStyle";
 import { drawStyle } from "@/lib/mapUtils";
+import { addPredictionRasterLayer } from "@/lib/predictionLayer";
 import { useMapStore } from "@/store";
-import style from "styled-jsx/style";
 
 // Make Mapbox Draw compatible with MapLibre
 const classes = MapboxDraw.constants.classes as Record<string, string>;
@@ -30,17 +30,29 @@ export function useMap() {
 
   const setMap = useMapStore((s) => s.setMap);
   const setDraw = useMapStore((s) => s.setDraw);
+  const setPredictionLayerReady = useMapStore(
+    (s) => s.setPredictionLayerReady,
+  );
   const draw = useMapStore((s) => s.draw);
 
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) return;
+
+    // Do not expose the map center and zoom level in the URL fragment.
+    if (window.location.hash) {
+      window.history.replaceState(
+        null,
+        "",
+        `${window.location.pathname}${window.location.search}`,
+      );
+    }
 
     const map = new maplibregl.Map({
       container: mapContainerRef.current,
       style: streetStyle,
       center: [51.388973, 35.689198],
       zoom: 9,
-      hash: true,
+      hash: false,
       attributionControl: false,
     });
 
@@ -60,7 +72,7 @@ export function useMap() {
         styles: drawStyle,
       });
 
-      map.addControl(draw, "top-left");
+      map.addControl(draw as any, "top-left");
 
       setDraw(draw);
 
@@ -106,19 +118,38 @@ export function useMap() {
 
   const setMapStyle = useCallback(
     (style: "street" | "satellite") => {
-      if (!mapRef.current) return;
+      const map = mapRef.current;
+      if (!map) return;
 
-      mapRef.current.setStyle(
+      map.setStyle(
         style === "street" ? streetStyle : satelliteStyle,
       );
 
-      mapRef.current.once("style.load", () => {
-        if (!draw) return;
+      map.once("style.load", () => {
+        const {
+          predictionLayerInfo,
+          soilMoistureVisible,
+        } = useMapStore.getState();
 
-        mapRef.current?.addControl(draw, "top-left");
+        if (predictionLayerInfo) {
+          const layerAdded = addPredictionRasterLayer(
+            map,
+            predictionLayerInfo,
+            soilMoistureVisible,
+          );
+          setPredictionLayerReady(layerAdded);
+        }
+
+        if (draw) {
+          try {
+            map.addControl(draw as any, "top-left");
+          } catch (error) {
+            console.warn("MapboxDraw could not be restored after style change", error);
+          }
+        }
       });
     },
-    [draw],
+    [draw, setPredictionLayerReady],
   );
 
   return {

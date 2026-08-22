@@ -12,12 +12,29 @@ class GeoserverHandler:
     def __init__(self, geoserver_url, username, password):
         self.geo = Geoserver(geoserver_url, username=username, password=password)
 
+    @staticmethod
+    def _as_list(value):
+        """Normalize GeoServer's empty, single-item, and list responses."""
+        if not value:
+            return []
+        return value if isinstance(value, list) else [value]
+
     def initialize_workspace(self, workspace):
         """Ensure the workspace exists in Geoserver."""
         self.geo.reset()
 
-        existing_workspaces = self.geo.get_workspaces()["workspaces"]["workspace"]
-        workspace_names = [ws["name"] for ws in existing_workspaces]
+        response = self.geo.get_workspaces()
+        workspaces = response.get("workspaces", {}) if isinstance(response, dict) else {}
+        workspace_items = (
+            workspaces.get("workspace", [])
+            if isinstance(workspaces, dict)
+            else []
+        )
+        workspace_names = {
+            item.get("name")
+            for item in self._as_list(workspace_items)
+            if isinstance(item, dict) and item.get("name")
+        }
 
         if workspace not in workspace_names:
             self.geo.create_workspace(workspace=workspace)
@@ -42,22 +59,38 @@ class GeoserverHandler:
 
                 try:
 
-                    # Get coverage stores
-                    css = self.geo.get_coveragestores()
+                    # Get coverage stores from the target workspace. The library
+                    # defaults to a workspace named "default", which may not exist.
+                    response = self.geo.get_coveragestores(workspace=workspace)
+                    stores = (
+                        response.get("coverageStores", {})
+                        if isinstance(response, dict)
+                        else {}
+                    )
+                    store_items = (
+                        stores.get("coverageStore", [])
+                        if isinstance(stores, dict)
+                        else []
+                    )
+                    store_names = {
+                        item.get("name")
+                        for item in self._as_list(store_items)
+                        if isinstance(item, dict) and item.get("name")
+                    }
 
-                    if css['coverageStores'] != '':
-                        coveragestore_name = css['coverageStores']['coverageStore'][0]['name']
+                    if layer_name in store_names:
+                        self.geo.delete_coveragestore(
+                            coveragestore_name=layer_name,
+                            workspace=workspace,
+                        )
+                        print(f"Successfully deleted {layer_name} from GeoServer.")
 
-                        self.geo.delete_coveragestore(coveragestore_name=layer_name, workspace=workspace)
-                        print(f"Successfully deleted {coveragestore_name} from GeoServer.")
-
-                        self.geo.create_coveragestore(layer_name=layer_name, path=tiff, workspace=workspace)
-                        print(f"Successfully created {coveragestore_name} from GeoServer.")
-                        
-                    else:
-                        print('ok')
-                        self.geo.create_coveragestore(layer_name=layer_name, path=tiff, workspace=workspace)
-                        print(f"Successfully created {coveragestore_name} from GeoServer.")
+                    self.geo.create_coveragestore(
+                        layer_name=layer_name,
+                        path=tiff,
+                        workspace=workspace,
+                    )
+                    print(f"Successfully created {layer_name} in GeoServer.")
 
                     print(f"Successfully uploaded {file_name} to GeoServer.")
                 except Exception as e:

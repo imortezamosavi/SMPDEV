@@ -42,6 +42,42 @@ map.addInteraction(modify);
 
 // Variable to store the coordinates of the last polygon
 let lastPolygonCoordinates = [];
+let moistureLayer = null;
+
+function showPredictionLayer(layerInfo) {
+    if (moistureLayer) {
+        map.removeLayer(moistureLayer);
+    }
+
+    moistureLayer = new ol.layer.Tile({
+        source: new ol.source.TileWMS({
+            url: 'http://127.0.0.1:8080/geoserver/demo/wms',
+            params: {
+                LAYERS: layerInfo || 'demo:soil_moisture_layer',
+                STYLES: 'style_1',
+                VERSION: '1.1.1',
+                SRS: 'EPSG:3857',
+                FORMAT: 'image/png',
+                TRANSPARENT: true,
+                TILED: true,
+                _ts: Date.now()
+            },
+            serverType: 'geoserver',
+            transition: 0
+        })
+    });
+
+    map.addLayer(moistureLayer);
+
+    const feature = vectorLayer.getSource().getFeatures()[0];
+    if (feature) {
+        map.getView().fit(feature.getGeometry().getExtent(), {
+            padding: [40, 40, 40, 40],
+            maxZoom: 16,
+            duration: 500
+        });
+    }
+}
 
 // Function to calculate polygon area in square kilometers
 function calculatePolygonArea(coordinates) {
@@ -149,22 +185,7 @@ document.getElementById('saveBtn').onclick = function() {
     })
     .then(result => {
         alert(result.message || 'Polygon saved successfully!');
-
-        // Add WMS Layer dynamically after successful save
-        const tifflayer = new ol.layer.Tile({
-            source: new ol.source.TileWMS({
-                url: 'http://localhost:8080/geoserver/demo/wms',
-                params: {
-                    LAYERS: result.layer_info, // Your WMS layer name
-                    TILED: true,
-                    FORMAT: 'image/png'
-                },
-                serverType: 'geoserver'
-            })
-        });
-
-        // Add the WMS layer to the map
-        map.addLayer(tifflayer);
+        showPredictionLayer(result.layer_info);
     })
     .catch(error => {
         console.error('Error:', error);
