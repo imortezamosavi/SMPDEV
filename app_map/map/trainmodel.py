@@ -1,10 +1,11 @@
 import ee
+import json
 import os
 import sys
 import requests
 import numpy as np
 import pandas as pd
-import geemap as geemap
+import geopandas as gpd
 from datetime import datetime
 from sklearn.metrics import r2_score as r2, mean_squared_error
 # from sklearn.metrics import r2_score as r2, mean_squared_error
@@ -20,6 +21,34 @@ ee.Initialize(credentials)
 
 print('Connected to GEE Server')
 print('*'*23)
+
+
+def shapefile_to_ee(path, label):
+    """Convert a shapefile to an Earth Engine FeatureCollection."""
+    absolute_path = os.path.abspath(path)
+    if not os.path.isfile(absolute_path):
+        raise ValueError(f"{label} shapefile does not exist: {absolute_path}")
+
+    try:
+        frame = gpd.read_file(absolute_path)
+    except Exception as exc:
+        raise ValueError(f"Unable to read {label} shapefile '{absolute_path}': {exc}") from exc
+
+    if frame.empty:
+        raise ValueError(f"{label} shapefile contains no features: {absolute_path}")
+    if frame.crs is None:
+        raise ValueError(f"{label} shapefile has no coordinate reference system: {absolute_path}")
+    if frame.geometry.isna().any() or frame.geometry.is_empty.any():
+        raise ValueError(f"{label} shapefile contains missing or empty geometries: {absolute_path}")
+
+    try:
+        frame = frame.to_crs(epsg=4326)
+        geojson = json.loads(frame.to_json(drop_id=True, na='null'))
+        return ee.FeatureCollection(geojson['features'])
+    except Exception as exc:
+        raise ValueError(
+            f"Unable to convert {label} shapefile '{absolute_path}' to Earth Engine: {exc}"
+        ) from exc
 
 class IindexExtractor:
     def __init__(self, geometry, scale):
@@ -127,12 +156,8 @@ class TrainModel:
         roi (str): Path to the shapefile representing the region of interest.
         points (str): Path to the shapefile representing the points.
         """
-        self.roi = geemap.shp_to_ee(roi)
-        if self.roi is None:
-            raise ValueError("Failed to convert ROI shapefile to Earth Engine object.")
-        self.points = geemap.shp_to_ee(points)
-        if self.points is None:
-            raise ValueError("Failed to convert Points shapefile to Earth Engine object.")
+        self.roi = shapefile_to_ee(roi, 'ROI')
+        self.points = shapefile_to_ee(points, 'Points')
 
     def reformat_date(self,feature):
         date_str = feature.getString('date')  # Get the 'date' property
