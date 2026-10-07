@@ -21,11 +21,7 @@ RUN --mount=type=cache,target=/root/.npm \
     elif [ -f pnpm-lock.yaml ]; then \
         corepack enable && pnpm install --ignore-scripts \
             --network-concurrency=4 \
-            --fetch-timeout=1200000 \
-            --fetch-retries=5 \
-            --fetch-retry-factor=2 \
-            --fetch-retry-mintimeout=10000 \
-            --fetch-retry-maxtimeout=120000; \
+            --fetch-timeout=1200000; \
     else \
         exit 1; \
     fi
